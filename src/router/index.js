@@ -13,6 +13,16 @@ export const routes = [
     hidden: true
   },
   {
+    path: '/addCard',
+    component: () => import('@/views/Car/CarCard/add-card'),
+    hidden: true
+  },
+  {
+    path: '/addEnterprise',
+    component: () => import('@/views/Park/Enterprise/AddEnterprise'),
+    hidden: true
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/workbench'

@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { getToken } from './auth'
+import { Message } from 'element-ui'
 // 1. 通用配置
 // 2. 定制化的配置
 
@@ -27,6 +29,12 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
+    // 添加token
+    const token = getToken()
+    if (token) {
+      // 前面是固定的写法 后面的token的拼接模式由后端来决定
+      config.headers.Authorization = token
+    }
     return config
   },
   error => {
@@ -39,7 +47,14 @@ service.interceptors.response.use(
   response => {
     return response.data
   },
+  // 接口出错的时候自动执行这个回调
   error => {
+    console.dir(error.response.data.msg)
+    // 错误类型有可能有好多种 根据不同的错误码做不同的的用户提示 写的位置都在这里
+    Message({
+      type: 'warning',
+      message: error.response.data.msg
+    })
     return Promise.reject(error)
   }
 )
