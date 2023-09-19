@@ -23,14 +23,75 @@ export function getIndustryListAPI() {
 }
 
 /**
- * 上传接口
+ * 创建企业
  * @param {*} data
  * @returns
  */
-export function uploadAPI(data) {
+export function createEnterpriseAPI(data) {
   return request({
-    url: '/upload',
+    url: '/park/enterprise',
     method: 'POST',
     data
+  })
+}
+
+/**
+ * 更新企业
+ * @param {*} data
+ * @returns
+ */
+export function updateExterpriseAPI(data) {
+  return request({
+    url: '/park/enterprise',
+    method: 'PUT',
+    data
+  })
+}
+
+/**
+ * 获取企业详情
+ * @param {*} id
+ * @returns
+ */
+export function getEnterpriseDetailAPI(id) {
+  return request({
+    url: `/park/enterprise/${id}`
+  })
+}
+
+/**
+ * 给当前企业添加合同
+ * @param {*} data
+ * @returns
+ */
+export function addRentAPI(data) {
+  return request({
+    url: '/park/enterprise/rent',
+    methods: 'POST',
+    data
+  })
+}
+
+/**
+ * 获取合同列表
+ * @param {*} id
+ * @returns
+ */
+export function getRentListAPI(id) {
+  return request({
+    url: `/park/enterprise/rent/${id}`
+  })
+}
+
+/**
+ * 退租
+ * @param {合同id} rentId
+ * @returns
+ */
+
+export function outRentAPI(rentId) {
+  return request({
+    url: `/park/enterprise/rent/${rentId}`,
+    method: 'PUT'
   })
 }
