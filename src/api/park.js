@@ -40,7 +40,7 @@ export function createEnterpriseAPI(data) {
  * @param {*} data
  * @returns
  */
-export function updateExterpriseAPI(data) {
+export function updateEnterpriseAPI(data) {
   return request({
     url: '/park/enterprise',
     method: 'PUT',
@@ -67,7 +67,7 @@ export function getEnterpriseDetailAPI(id) {
 export function addRentAPI(data) {
   return request({
     url: '/park/enterprise/rent',
-    methods: 'POST',
+    method: 'POST',
     data
   })
 }
@@ -93,5 +93,29 @@ export function outRentAPI(rentId) {
   return request({
     url: `/park/enterprise/rent/${rentId}`,
     method: 'PUT'
+  })
+}
+
+/**
+ * 删除企业
+ * @param {*} id
+ * @returns
+ */
+export function delEnterpriseAPI(id) {
+  return request({
+    url: `/park/enterprise/${id}`,
+    method: 'DELETE'
+  })
+}
+
+/**
+ * 删除企业的租赁合同
+ * @param {*} id
+ * @returns
+ */
+export function delRentAPI(id) {
+  return request({
+    url: `/park/enterprise/rent/${id}`,
+    method: 'DELETE'
   })
 }

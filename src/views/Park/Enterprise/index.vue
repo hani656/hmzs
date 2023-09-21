@@ -3,7 +3,6 @@
     <!-- 搜索区域 -->
     <div class="search-container">
       <div class="search-label">企业名称：</div>
-      <div class="search-label">企业名称：</div>
       <!--
         分页 页数位于子组件内部 父组件如果想要用 子传父去获取 @current-change='pageChange'
         清除 叉号位于子组件中 点击叉号时去通知父组件我现在给你清空了 你去做事儿吧 @clear
@@ -25,12 +24,12 @@
               <el-table-column label="租赁楼宇" width="320" prop="buildingName" />
               <el-table-column label="租赁起始时间" prop="startTime" />
               <el-table-column label="合同状态" prop="status">
-                <template #default="{scope}">
+                <template #default="scope">
                   <!--
                     插值表达式支持函数调用吗？ 支持
                     调用一个函数的时候 插值表达式的位置渲染的是什么？ 函数执行之后的返回值
                    -->
-                  <el-tag type="info">{{ formatStatus(scope.row.status) }}</el-tag>
+                  <el-tag :type="formatInfoType(scope.row.status)">{{ formatStatus(scope.row.status) }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="操作" width="180">
@@ -39,8 +38,8 @@
                   删除：只有已退租的时候 删除才是启用的 否则就是禁用的
                  -->
                 <template #default="scope">
-                  <el-button size="mini" :disabled="scoped.row.status === 3" type="text" @click="outRent(scope.row.id)">退租</el-button>
-                  <el-button size="mini" type="text">删除</el-button>
+                  <el-button size="mini" :disabled="scope.row.status === 3" type="text" @click="outRent(scope.row.id)">退租</el-button>
+                  <el-button size="mini" :disabled="scope.row.status !== 3" type="text" @click="delRentBtn(scope.row.id)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -60,9 +59,9 @@
         <el-table-column label="操作">
           <template #default="{row}">
             <el-button size="mini" type="text" @click="addRent(row.id)">添加合同</el-button>
-            <el-button size="mini" type="text">查看</el-button>
-            <el-button size="mini" type="text" @click="editEnterprice(row.id)">编辑</el-button>
-            <el-button size="mini" type="text">删除</el-button>
+            <el-button size="mini" type="text" @click="lookRent(row.id)">查看</el-button>
+            <el-button size="mini" type="text" @click="editEnterprise(row.id)">编辑</el-button>
+            <el-button size="mini" type="text" :disabled="!!list.length" @click="delEnterpriseBtn(row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -109,6 +108,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               value-format="yyyy-MM-dd"
+              :picker-options="pickerOptions"
             />
           </el-form-item>
           <el-form-item label="租赁合同" prop="contractId">
@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import { getListAPI, addRentAPI, getRentListAPI, outRentAPI } from '@/api/park'
+import { getListAPI, addRentAPI, getRentListAPI, outRentAPI, delEnterpriseAPI, delRentAPI } from '@/api/park'
 import { getBuildingRentListAPI } from '@/api/building'
 import { uploadAPI } from '@/api/common'
 export default {
@@ -174,23 +174,62 @@ export default {
           { required: true, message: '请上传合同文件' }
         ]
       },
-      buildingList: [] // 楼宇列表
+      buildingList: [], // 楼宇列表
+      // 禁用之前的时间
+      pickerOptions: {
+        disabledDate(time) {
+          // Date.now() 是javascript中的内置函数，它返回自1970年1月1日00:00:00 UTC到现在经过的毫秒数
+          return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
+        }
+      }
     }
   },
   mounted() {
     this.getList()
   },
   methods: {
+    // 删除企业的租赁合同
+    async delRentBtn(id) {
+      await delRentAPI(id)
+      this.$message.success('删除租赁合同成功')
+      this.getList()
+    },
+    // 删除企业
+    async delEnterpriseBtn(id) {
+      await delEnterpriseAPI(id)
+      this.$message.success('删除企业成功')
+      this.getList()
+    },
+    lookRent(id) {
+      this.$router.push({
+        path: '/enterpriseDetail',
+        query: {
+          id
+        }
+      })
+    },
     async outRent(id) {
-      const res = await outRentAPI(id)
+      await outRentAPI(id)
+      this.$message.success('退租成功')
+      this.getList()
+    },
+    formatInfoType(status) {
+      const MAP = {
+        0: 'warning',
+        1: 'success',
+        2: 'info',
+        3: 'danger'
+      }
+      // return 格式化之后的中文显示
+      return MAP[status]
     },
     formatStatus(status) {
-      console.log(status)
+      // console.log(status)
       const MAP = {
         0: '待生效',
         1: '生效中',
         2: '已到期',
-        3: '到期了'
+        3: '已退租'
       }
       // return 格式化之后的中文显示
       return MAP[status]
@@ -203,7 +242,7 @@ export default {
       // 判断条件：第一个row是否能在第二个rows中找到 如果找到了 代表打开了 如果找不到 代表收起了
       // find  findIndex
       const item = rows.find(item => item.id === row.id)
-      console.log(item)
+      // console.log(item)
       if (item) {
         // 1. 先拿到当前行的数据
         // 2. 使用当前行的企业数据 获取下面的合同列表接口
@@ -241,6 +280,8 @@ export default {
           }
           this.$refs.uploadRef.clearFiles()
           // 3. 重新拉取一下列表
+          this.$message.success('合同添加成功')
+          this.getList()
         }
       })
     },
@@ -302,7 +343,7 @@ export default {
       console.log('清空了')
       this.getList()
     },
-    editEnterprice(id) {
+    editEnterprise(id) {
       this.$router.push({
         path: '/addEnterprise',
         query: {

@@ -23,6 +23,16 @@ export const routes = [
     hidden: true
   },
   {
+    path: '/enterpriseDetail',
+    component: () => import('@/views/Park/Enterprise/EnterpriseDetail'),
+    hidden: true
+  },
+  {
+    path: '/addRole',
+    component: () => import('@/views/System/Role/AddRole'),
+    hidden: true
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/workbench'

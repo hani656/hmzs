@@ -1,6 +1,10 @@
 <template>
   <div v-if="isExternal" :style="styleExternalIcon" class="svg-external-icon svg-icon" v-on="$listeners" />
   <svg v-else :class="svgClass" aria-hidden="true" v-on="$listeners">
+    <!--
+      这里是渲染svg图表的固定写法 iconName是由我们传给组件的iconClass和固定的字符串拼接得到的渲染名称
+      我们传入不同的iconClass他就会渲染出来不同的图标！！！
+     -->
     <use :xlink:href="iconName" />
   </svg>
 </template>
@@ -11,6 +15,7 @@ import { isExternal } from '@/utils/validate'
 
 export default {
   name: 'SvgIcon',
+  // props组件的参数 决定我们使用它的时候 如何通过船体不同属性 让他渲染不同的小图标
   props: {
     iconClass: {
       type: String,

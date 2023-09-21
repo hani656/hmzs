@@ -75,7 +75,8 @@
     </main>
     <footer class="add-footer">
       <div class="btn-container">
-        <el-button>重置</el-button>
+        <el-button v-if="$route.query.id" @click="$router.back()">取消</el-button>
+        <el-button v-else @click="resetBtn">重置</el-button>
         <el-button type="primary" @click="confirmAdd">确定</el-button>
       </div>
     </footer>
@@ -83,7 +84,7 @@
 </template>
 
 <script>
-import { getIndustryListAPI, createEnterpriseAPI, getEnterpriseDetailAPI, updateExterpriseAPI } from '@/api/park'
+import { getIndustryListAPI, createEnterpriseAPI, getEnterpriseDetailAPI, updateEnterpriseAPI } from '@/api/park'
 import { uploadAPI } from '@/api/common'
 export default {
   data() {
@@ -148,6 +149,10 @@ export default {
     }
   },
   methods: {
+    // 添加企业页面的表单重置
+    resetBtn() {
+      this.$refs.ruleForm.resetFields()
+    },
     async getDetail() {
       const res = await getEnterpriseDetailAPI(this.id)
       this.addForm = res.data
@@ -205,7 +210,7 @@ export default {
             // 更新接口
             const { name, id, legalPerson, registeredAddress, industryCode,
               businessLicenseId, businessLicenseUrl, contact, contactNumber } = this.addForm
-            await updateExterpriseAPI({ name, id, legalPerson, registeredAddress, industryCode,
+            await updateEnterpriseAPI({ name, id, legalPerson, registeredAddress, industryCode,
               businessLicenseId, businessLicenseUrl, contact, contactNumber })
           } else {
             await createEnterpriseAPI(this.addForm)
@@ -268,7 +273,7 @@ export default {
           .el-form-item{
             width: 50%;
             .imgcss{
-                max-width: 400px; /* 最大宽度为100% */
+                max-width: 250px; /* 最大宽度为100% */
                 height: auto; /* 自动高度调整 */
                 }
           }
