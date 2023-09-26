@@ -48,6 +48,7 @@
                 default-expand-all
                 node-key="id"
                 highlight-current
+                check-strictly
                 :props="{ label: 'title' }"
               />
             </div>
@@ -78,6 +79,7 @@
                   default-expand-all
                   node-key="id"
                   :highlight-current="false"
+                  check-strictly
                   :props="{ label: 'title',disabled:()=>true}"
                 />
               </div>

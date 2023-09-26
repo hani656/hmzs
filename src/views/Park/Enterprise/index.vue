@@ -13,7 +13,7 @@
       <el-button type="primary" @click="doSearch">查询</el-button>
     </div>
     <div class="create-container">
-      <el-button type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
+      <el-button v-btn-auth="'park:enterprise:add_edit'" type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -61,7 +61,7 @@
             <el-button size="mini" type="text" @click="addRent(row.id)">添加合同</el-button>
             <el-button size="mini" type="text" @click="lookRent(row.id)">查看</el-button>
             <el-button size="mini" type="text" @click="editEnterprise(row.id)">编辑</el-button>
-            <el-button size="mini" type="text" :disabled="!!list.length" @click="delEnterpriseBtn(row.id)">删除</el-button>
+            <el-button size="mini" type="text" @click="delEnterpriseBtn(row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

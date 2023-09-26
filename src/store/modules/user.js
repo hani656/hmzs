@@ -1,4 +1,4 @@
-import { loginAPI } from '@/api/user'
+import { loginAPI, getProfileAPI } from '@/api/user'
 import { setToken, getToken, removeToken } from '@/utils/auth'
 
 export default {
@@ -6,7 +6,8 @@ export default {
   // 数据状态 响应式 data
   state: {
     // 优先从本地取
-    token: getToken() || ''
+    token: getToken() || '',
+    userProfile: {} // 个人信息
   },
   // 同步修改 Vuex架构中 有且只有一种提交mutation
   mutations: {
@@ -18,7 +19,11 @@ export default {
     },
     clearUserInfo(state) {
       state.token = ''
+      state.userProfile = {}
       removeToken()
+    },
+    setProfile(state, userProfile) {
+      state.userProfile = userProfile
     }
   },
   // 异步 接口请求 + 提交mutation
@@ -28,6 +33,13 @@ export default {
       const res = await loginAPI({ username, password })
       // 2.提交mutations
       ctx.commit('setToken', res.data.token)
+    },
+    async getUserProfile(ctx) {
+      const res = await getProfileAPI()
+      ctx.commit('setProfile', res.data)
+      // 如果想把当前的函数内的数据给到另一个js模块使用
+      // 直接把目标数据return出去
+      return res.data.permissions
     }
   }
 }
