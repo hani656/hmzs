@@ -27,6 +27,11 @@ import './directive'
 // 添加权限控制初始化(直接把permmision.js中的代码立即执行)
 import './permission'
 
+// 导入乾坤配置
+import './registerMicroAPP'
+
+// 测试环境变化
+console.log('环境变量为:',process.env.VUE_APP_BASE_URL)
 Vue.config.productionTip = false
 
 // vue实例化

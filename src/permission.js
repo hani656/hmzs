@@ -3,7 +3,7 @@ import router from './router'
 import { asyncRoutes } from './router/asyncRoutes'
 import { getToken } from './utils/auth'
 import store from './store'
-console.log('权限控制生效了')
+// console.log('权限控制生效了')
 
 const WHITE_LIST = ['/login', '/404']
 
@@ -26,7 +26,7 @@ function getSecondRoutePerms(permsArr) {
 
 // 根据权限标识过滤路由表
 function getRoutes(firstRoutePerms, secondRoutePerms, asyncRoutes) {
-  console.log(firstRoutePerms)
+  // console.log(firstRoutePerms)
   if (firstRoutePerms.includes('*')) {
     // 管理员
     return asyncRoutes
@@ -59,14 +59,14 @@ router.beforeEach(async(to, from, next) => {
       // 1. 调用action函数获取用户权限数据
       const perms = await store.dispatch('user/getUserProfile')
       // 2. 把后端的权限数组格式化成我们自己的俩个权限数据
-      console.log('当前的权限数据为:', perms)
+      // console.log('当前的权限数据为:', perms)
       const firstRoutePerms = getFirstRoutePerms(perms)
-      console.log(firstRoutePerms)
+      // console.log(firstRoutePerms)
       const secondRoutePerms = getSecondRoutePerms(perms)
-      console.log(secondRoutePerms)
+      // console.log(secondRoutePerms)
       // 3. 根据权限标识 过滤筛选 动态路由表 最终得到有资格显示到左侧的所有路由表
       const routes = getRoutes(firstRoutePerms, secondRoutePerms, asyncRoutes)
-      console.log('最终路由表', routes)
+      // console.log('最终路由表', routes)
       // 4. 把动态路由表加入到路由系统中（当浏览器中访问路由的路径 显示渲染出来对应的组件）
 
       routes.forEach(route => {

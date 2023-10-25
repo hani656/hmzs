@@ -3,6 +3,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
+          <el-button size="mini" type="primary"  @click="$router.push('/big-screen')">打开大屏</el-button>
           <!-- 用户名称 -->
           <span class="name">黑马管理员</span>
         </div>
@@ -135,6 +136,7 @@ export default {
         margin-top: 5px;
         position: relative;
         .name{
+          margin-left: 10px;
           font-weight: 600;
           cursor: pointer;
         }

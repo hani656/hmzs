@@ -2,7 +2,7 @@
   <div class="login_body">
     <div class="bg" />
     <div class="box">
-      <div class="title">智慧园区-登录</div>
+      <div class="title">team+智慧园区-登录</div>
       <!--
         基础校验
           el-form  :model="表单对象" :rules="规则对象"
@@ -53,8 +53,8 @@ export default {
     return {
       // 表单数据
       form: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: 'admin123'
       },
       remember: true,
       // 规则对象
@@ -120,9 +120,10 @@ export default {
   .bg {
     width: 60vw;
     height: 100vh;
-    background: url('~@/assets/login-bg.svg') no-repeat;
+    background: url('~@/assets/12233.png') no-repeat;
     background-position: right top;
     background-size: cover;
+    border-radius: 0 30px 30px 0;
   }
   .box {
     margin: 200px 10% 0;

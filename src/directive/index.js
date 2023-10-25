@@ -11,12 +11,12 @@ Vue.directive('btn-auth', {
   inserted(el, binding) {
     // el: 指令绑定到的那个dom元素 - button
     // binding.value: 指令的绑定值 v-btn-auth="指令绑定值"
-    console.log(el, binding.value)
+    // console.log(el, binding.value)
     // 2.在指令中添加控制按钮显示和隐藏逻辑
     // 核心逻辑：判断当前按钮独有的权限标识是否在我们的perms中找到 如果找得到 就显示 找不到就隐藏
     const btnPerm = binding.value // 当前按钮独有的标识 固定的 和后端商量好的
     const userPermissions = store.state.user.userProfile.permissions
-    console.log(btnPerm, userPermissions)
+    // console.log(btnPerm, userPermissions)
     if (!userPermissions.includes(btnPerm)) {
       el.remove()
     }
