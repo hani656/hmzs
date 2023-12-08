@@ -5,7 +5,7 @@
         <div class="avatar-wrapper">
           <el-button size="mini" type="primary"  @click="$router.push('/big-screen')">打开大屏</el-button>
           <!-- 用户名称 -->
-          <span class="name">黑马管理员</span>
+          <span class="name">team+管理员</span>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
