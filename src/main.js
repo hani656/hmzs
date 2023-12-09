@@ -31,7 +31,7 @@ import './permission'
 import './registerMicroAPP'
 
 // 测试环境变化
-console.log('环境变量为:',process.env.VUE_APP_BASE_URL)
+// console.log('环境变量为:',process.env.VUE_APP_BASE_URL)
 Vue.config.productionTip = false
 
 // vue实例化

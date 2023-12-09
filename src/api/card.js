@@ -74,3 +74,12 @@ export function delAllCardAPI(ids) {
     method: 'DELETE'
   })
 }
+
+// 月卡续费提交接口
+export function xufeiCardAPI(data) {
+  return request({
+    url: '/parking/card/recharge',
+    method: 'POST',
+    data
+  })
+}

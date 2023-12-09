@@ -1,7 +1,7 @@
 <template>
   <div class="add-card">
     <header class="add-header">
-      <el-page-header :content="id ? '编辑月卡' : '新增月卡'" @back="$router.back()" />
+      <el-page-header :content="state" @back="$router.back()" />
     </header>
     <main class="add-main">
       <div class="form-container">
@@ -14,27 +14,28 @@
           -->
           <el-form ref="carInfoForm" :model="carInfoForm" :rules="carInfoRules" label-width="100px">
             <el-form-item label="车主姓名" prop="personName">
-              <el-input v-model="carInfoForm.personName" />
+              <el-input v-model="carInfoForm.personName" :disabled="xuFei" />
             </el-form-item>
             <el-form-item label="联系方式" prop="phoneNumber">
-              <el-input v-model="carInfoForm.phoneNumber" />
+              <el-input v-model="carInfoForm.phoneNumber" :disabled="xuFei" />
             </el-form-item>
             <el-form-item label="车辆号码" prop="carNumber">
-              <el-input v-model="carInfoForm.carNumber" />
+              <el-input v-model="carInfoForm.carNumber" :disabled="xuFei" />
             </el-form-item>
             <el-form-item label="车辆品牌" prop="carBrand">
-              <el-input v-model="carInfoForm.carBrand" />
+              <el-input v-model="carInfoForm.carBrand" :disabled="xuFei" />
             </el-form-item>
           </el-form>
         </div>
       </div>
       <div class="form-container">
-        <div class="title">最新一次月卡缴费信息</div>
+        <div class="title">{{ xuFei? '月卡缴费信息' : '最新一次月卡缴费信息' }}</div>
         <div class="form">
           <el-form ref="feeForm" :model="feeForm" :rules="feeFormRules" label-width="100px">
             <el-form-item label="有效日期" prop="payTime">
               <el-date-picker
                 v-model="feeForm.payTime"
+                style="width: 100%;"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -70,7 +71,7 @@
 </template>
 
 <script>
-import { createCardAPI, getDetailAPI, updateCardAPI } from '@/api/card'
+import { createCardAPI, getDetailAPI, updateCardAPI, xufeiCardAPI } from '@/api/card'
 export default {
   data() {
     return {
@@ -167,12 +168,25 @@ export default {
   computed: {
     id() {
       return this.$route.query.id
+    },
+    xuFei() {
+      return !!this.$route.query.xuFei
+    },
+    state() {
+      if (this.id && this.xuFei) {
+        return '月卡续费'
+      } else if (this.id) {
+        return '编辑月卡'
+      } else {
+        return '新增月卡'
+      }
     }
   },
   mounted() {
-    console.log(this.$route.query.id)
+    // console.log(this.$route.query.id)
     // 只有id存在 也就说是编辑状态 才有资格获取详情
     if (this.id) { this.getCardDetail() }
+    // console.log('续费：',this.xuFei)
   },
   methods: {
     confirmAdd() {
@@ -190,21 +204,38 @@ export default {
           // 第二个表单校验
           this.$refs.feeForm.validate(async valid => {
             if (valid) {
-              // TODO API
               // 二次处理请求参数
-              const reqData = {
-                ...this.carInfoForm,
-                ...this.feeForm,
-                cardStartDate: this.feeForm.payTime[0],
-                cardEndDate: this.feeForm.payTime[1]
-              }
-              delete reqData.payTime
-              console.log(reqData)
-              // 调用接口需要区分是编辑还是新增
-              if (this.id) {
+              if (this.xuFei && this.id) {
+                const reqData = {
+                  ...this.feeForm,
+                  cardStartDate: this.feeForm.payTime[0],
+                  cardEndDate: this.feeForm.payTime[1],
+                  carInfoId: this.carInfoForm.carInfoId
+                }
+                // 删除reqData对象中的payTime属性,接口不需要该参数，否则报错
+                delete reqData.payTime
+                await xufeiCardAPI(reqData)
+              } else if (this.id) {
                 // 编辑
+                const reqData = {
+                  ...this.carInfoForm,
+                  ...this.feeForm,
+                  cardStartDate: this.feeForm.payTime[0],
+                  cardEndDate: this.feeForm.payTime[1]
+                }
+                // 删除reqData对象中的payTime属性
+                delete reqData.payTime
                 await updateCardAPI(reqData)
               } else {
+                // 新增
+                const reqData = {
+                  ...this.carInfoForm,
+                  ...this.feeForm,
+                  cardStartDate: this.feeForm.payTime[0],
+                  cardEndDate: this.feeForm.payTime[1]
+                }
+                // 删除reqData对象中的payTime属性
+                delete reqData.payTime
                 await createCardAPI(reqData)
               }
               // 后续处理
@@ -224,10 +255,18 @@ export default {
       const { carInfoId, rechargeId, personName, phoneNumber, carNumber, carBrand } = res.data
       this.carInfoForm = { carInfoId, rechargeId, personName, phoneNumber, carNumber, carBrand }
       // 第二个表单
-      const { cardStartDate, cardEndDate, paymentAmount, paymentMethod } = res.data
-      this.feeForm.payTime = [cardStartDate, cardEndDate]
-      this.feeForm.paymentAmount = paymentAmount
-      this.feeForm.paymentMethod = paymentMethod
+      // 判断是编辑还是学费，如果是续费，将月卡续费需要用户填写的数据清空
+      if (this.xuFei) {
+        // 当时续费时，第二个表单只显示开始时间，其他需要用户来填写
+        const { cardStartDate, cardEndDate } = res.data
+        this.feeForm.payTime = [cardStartDate, cardEndDate]
+      } else {
+        // 编辑时，获取所有数据进行回填
+        const { cardStartDate, cardEndDate, paymentAmount, paymentMethod } = res.data
+        this.feeForm.payTime = [cardStartDate, cardEndDate]
+        this.feeForm.paymentAmount = paymentAmount
+        this.feeForm.paymentMethod = paymentMethod
+      }
     }
   }
 }

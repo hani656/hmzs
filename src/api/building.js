@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 /**
- * 获取楼宇列表
+ * 获取可租赁楼宇列表
  * @param {*} id
  * @returns
  */

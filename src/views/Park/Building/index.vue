@@ -13,7 +13,6 @@
     <div class="table">
       <el-table
         style="width: 100%;"
-
         :data="buildingList"
       >
         <el-table-column
@@ -52,7 +51,6 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="200"
         >
           <template #default="scope">
             <el-button
@@ -63,7 +61,7 @@
             <el-button
               size="mini"
               type="text"
-              @click="confirmDel(scope.row.id)"
+              @click="confirmDel(scope.row)"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -185,6 +183,15 @@ export default {
       // 2. 调用获取列表接口
       this.getBuildingList()
     },
+    // 统一清空表单
+    clearForm() {
+      this.addForm = {
+        name: '',
+        floors: null,
+        area: null,
+        propertyFeePrice: null
+      }
+    },
     // 添加逻辑
     addBuilding() {
       this.dialogVisible = true
@@ -192,6 +199,8 @@ export default {
     // ❌
     closeDialog() {
       this.dialogVisible = false
+      // 注意这里需要清空表单数据，在打开编辑后，然后在打开添加区域弹框时，表单数据会被保留，因此需要清空表单数据
+      this.clearForm()
     },
     // 添加的确定逻辑
     confirmAdd() {
@@ -212,28 +221,26 @@ export default {
           this.$message.success(`${this.addForm.id ? '编辑楼宇成功' : '添加楼宇成功'}`)
           // 3. 关闭弹框
           this.dialogVisible = false
-          // 重置
-          this.addForm = {
-            name: '',
-            floors: null,
-            area: null,
-            propertyFeePrice: null
-          }
+          // 重置表单
+          this.clearForm()
         }
       })
     },
     // 删除逻辑
-    async confirmDel(id) {
-      this.$confirm('确认删除当前楼宇吗？', '提示', {
+    async confirmDel(row) {
+      this.$confirm(`确认删除当前（${row.name}）楼宇吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async() => {
-        await delBuildingListAPI(id)
+        await delBuildingListAPI(row.id)
         this.getBuildingList()
         this.$message.success('删除楼宇成功')
       }).catch(() => {
-
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     // 点击编辑时打开弹框并回显数据

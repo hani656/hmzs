@@ -64,10 +64,10 @@
 
            -->
           <template #default="scope">
-            <el-button size="mini" type="text">续费</el-button>
+            <el-button size="mini" type="text" @click="xuFeiCard(scope.row.id, 'xuFei')">续费</el-button>
             <el-button size="mini" type="text">查看</el-button>
             <el-button size="mini" type="text" @click="editCard(scope.row.id)">编辑</el-button>
-            <el-button size="mini" type="text" @click="delCard(scope.row.id)">删除</el-button>
+            <el-button size="mini" type="text" @click="delCard(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -188,6 +188,16 @@ export default {
       // 2. 执行getList
       this.getList()
     },
+    xuFeiCard(id, xuFei) {
+      // console.log(id,xuFei)
+      this.$router.push({
+        path: '/addCard',
+        query: {
+          id,
+          xuFei
+        }
+      })
+    },
     editCard(id) {
       // console.log(id)
       // params - url/1001
@@ -200,13 +210,13 @@ export default {
         }
       })
     },
-    delCard(id) {
-      this.$confirm('确认删除月卡吗, 是否继续?', '提示', {
+    delCard(row) {
+      this.$confirm(`确认删除该 （${row.carNumber}） 月卡吗, 是否继续?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async() => {
-        await delCardAPI(id)
+        await delCardAPI(row.id)
         // 更新列表
         this.getList()
         this.$message({

@@ -13,7 +13,7 @@
       <el-button type="primary" @click="doSearch">查询</el-button>
     </div>
     <div class="create-container">
-      <el-button v-btn-auth="'park:enterprise:add_edit'" type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
+      <el-button type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -52,16 +52,13 @@
         <el-table-column type="index" label="序号" />
         <el-table-column label="企业名称" width="320" prop="name" />
         <el-table-column label="联系人" prop="contact" />
-        <el-table-column
-          label="联系电话"
-          prop="contactNumber"
-        />
+        <el-table-column label="联系电话" prop="contactNumber" />
         <el-table-column label="操作">
           <template #default="{row}">
             <el-button size="mini" type="text" @click="addRent(row.id)">添加合同</el-button>
             <el-button size="mini" type="text" @click="lookRent(row.id)">查看</el-button>
             <el-button size="mini" type="text" @click="editEnterprise(row.id)">编辑</el-button>
-            <el-button size="mini" type="text" @click="delEnterpriseBtn(row.id)">删除</el-button>
+            <el-button size="mini" type="text" @click="delEnterpriseBtn(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -142,7 +139,7 @@
 
 <script>
 import { getListAPI, addRentAPI, getRentListAPI, outRentAPI, delEnterpriseAPI, delRentAPI } from '@/api/park'
-import { getBuildingRentListAPI } from '@/api/building'
+import { getRentBuildListAPI } from '@/api/building'
 import { uploadAPI } from '@/api/common'
 export default {
   data() {
@@ -195,10 +192,24 @@ export default {
       this.getList()
     },
     // 删除企业
-    async delEnterpriseBtn(id) {
-      await delEnterpriseAPI(id)
-      this.$message.success('删除企业成功')
-      this.getList()
+    async delEnterpriseBtn(row) {
+      // await delEnterpriseAPI(id)
+      // this.$message.success('删除企业成功')
+      // this.getList()
+      this.$confirm(`确认删除当前 （${row.name}） 企业吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await delEnterpriseAPI(row.id)
+        this.getList()
+        this.$message.success('删除企业成功')
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     lookRent(id) {
       this.$router.push({
@@ -256,7 +267,6 @@ export default {
       // 1. 表单校验
       this.$refs.addForm.validate(valid => {
         if (valid) {
-          // TODO API
           // 2. 调用接口
           // 处理参数
           const { buildingId, contractId, contractUrl, type, enterpriseId } = this.rentForm
@@ -304,7 +314,7 @@ export default {
       // 作为下拉列表
       // 1. 单独的接口
       // 2. 使用table列表的接口 - {page:1,pageSize:100}
-      const res = await getBuildingRentListAPI()
+      const res = await getRentBuildListAPI()
       this.buildingList = res.data
     },
     // 添加合同
