@@ -3,6 +3,34 @@
     <header class="add-header">
       <el-page-header content="查看企业" @back="$router.back()" />
     </header>
+
+    <div class="add-descriptions">
+      <div class="form-descriptions">
+        <el-descriptions title="企业信息" direction="vertical" :column="4" border>
+          <el-descriptions-item label="企业名称">{{ enterpriseInfo.name }}</el-descriptions-item>
+          <el-descriptions-item label="法人">{{ enterpriseInfo.legalPerson }}</el-descriptions-item>
+          <el-descriptions-item label="注册地址">{{ enterpriseInfo.registeredAddress }}</el-descriptions-item>
+          <el-descriptions-item label="所在行业">{{ enterpriseInfo.industryName }}</el-descriptions-item>
+          <!-- <el-descriptions-item label="营业执照">{{ enterpriseInfo.businessLicenseUrl }}</el-descriptions-item> -->
+          <el-descriptions-item label="营业执照">
+            <el-image
+              style="width: 100px; height: 60px"
+              :src="enterpriseInfo.businessLicenseUrl"
+              :preview-src-list="srcList"
+            />
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+    </div>
+
+    <div class="add-descriptions">
+      <div class="form-descriptions">
+        <el-descriptions title="联系人信息" direction="vertical" :column="4" border>
+          <el-descriptions-item label="企业联系人">{{ enterpriseInfo.contact }}</el-descriptions-item>
+          <el-descriptions-item label="联系电话">{{ enterpriseInfo.contactNumber }}</el-descriptions-item>
+        </el-descriptions></div>
+    </div>
+
     <main class="add-main">
       <div class="form-container">
         <div class="title">租赁记录</div>
@@ -81,8 +109,10 @@ const previewURL = 'https://view.officeapps.live.com/op/view.aspx'
 export default {
   data() {
     return {
+      enterpriseInfo: '',
       rentList: [],
-      previewURL: previewURL
+      previewURL: previewURL,
+      srcList: []
     }
   },
   mounted() {
@@ -91,7 +121,9 @@ export default {
   methods: {
     async getDetail() {
       const res = await getEnterpriseDetailAPI(this.$route.query.id)
+      this.enterpriseInfo = res.data
       this.rentList = res.data.rent
+      this.srcList = [res.data.businessLicenseUrl]
     }
   }
 }
@@ -123,9 +155,22 @@ export default {
     }
   }
 
+  .add-descriptions{
+    background: #f4f6f8;
+    padding: 20px 130px 10px 130px;
+    .form-descriptions{
+      background-color: #fff;
+      padding: 20px;
+      .aaaa{
+        margin: 0 auto;
+        width: 80%;
+      }
+    }
+  }
+
   .add-main {
     background: #f4f6f8;
-    padding: 20px 130px;
+    padding: 10px 130px 10px 130px;
 
     .form-container {
       background-color: #fff;
@@ -134,6 +179,7 @@ export default {
         height: 60px;
         line-height: 60px;
         padding-left: 20px;
+        font-weight: bold;
       }
     }
     .table-container{

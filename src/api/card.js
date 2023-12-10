@@ -64,7 +64,7 @@ export function delCardAPI(id) {
 }
 
 /**
- * 删除月卡
+ * 批量删除月卡
  * @param {*} ids [1,2,3]
  * @returns
  */
@@ -81,5 +81,13 @@ export function xufeiCardAPI(data) {
     url: '/parking/card/recharge',
     method: 'POST',
     data
+  })
+}
+
+// 获取月卡、车位、占有率
+export function getTagInfoAPI(id) {
+  return request({
+    url: '/parking/card/proportion',
+    method: 'GET'
   })
 }

@@ -26,6 +26,7 @@
     <div class="create-container">
       <el-button type="primary" @click="$router.push('/addCard')">添加月卡</el-button>
       <el-button @click="delAllCard">批量删除</el-button>
+      <el-tag><i class="el-icon-chat-dot-square" style="font-size:larger;" /> 本园区共计 {{ tagInfo.spaceNumber }} 个车位，月卡用户 {{ tagInfo.cardCount }} 人，车位占有率 {{ tagInfo.proportion }}</el-tag>
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -65,7 +66,7 @@
            -->
           <template #default="scope">
             <el-button size="mini" type="text" @click="xuFeiCard(scope.row.id, 'xuFei')">续费</el-button>
-            <el-button size="mini" type="text">查看</el-button>
+            <el-button size="mini" type="text" @click="viewCard(scope.row.id)">查看</el-button>
             <el-button size="mini" type="text" @click="editCard(scope.row.id)">编辑</el-button>
             <el-button size="mini" type="text" @click="delCard(scope.row)">删除</el-button>
           </template>
@@ -88,43 +89,17 @@
         @current-change="currentChange"
       />
     </div>
-    <!-- 添加弹框 -->
-    <el-dialog
-      title="添加月卡"
-      width="580px"
-    >
-      <!-- 表单接口 -->
-      <div class="form-container">
-        <!-- <el-form ref="addForm" :model="addForm" :rules="addFormRules">
-          <el-form-item label="楼宇名称" prop="name">
-            <el-input v-model="addForm.name" />
-          </el-form-item>
-          <el-form-item label="楼宇层数" prop="floors">
-            <el-input v-model="addForm.floors" />
-          </el-form-item>
-          <el-form-item label="在管面积" prop="area">
-            <el-input v-model="addForm.area" />
-          </el-form-item>
-          <el-form-item label="物业费" prop="propertyFeePrice">
-            <el-input v-model="addForm.propertyFeePrice" />
-          </el-form-item>
-        </el-form> -->
-      </div>
-      <template #footer>
-        <el-button size="mini">取 消</el-button>
-        <el-button size="mini" type="primary">确 定</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getCardListAPI, delCardAPI, delAllCardAPI } from '@/api/card'
+import { getCardListAPI, delCardAPI, delAllCardAPI, getTagInfoAPI } from '@/api/card'
 export default {
   data() {
     return {
       selectedList: [],
       list: [], // 月卡列表
+      tagInfo: '', // 月卡、车位、占有率
       params: {
         page: 1,
         pageSize: 5,
@@ -151,6 +126,7 @@ export default {
   },
   mounted() {
     this.getList()
+    this.getTagInfo()
   },
   methods: {
     async getList() {
@@ -161,6 +137,13 @@ export default {
       this.list = res.data.rows
       this.total = res.data.total
     },
+    // // 获取月卡、车位、占有率
+    async getTagInfo() {
+      const res = await getTagInfoAPI()
+      this.tagInfo = res.data
+    },
+    // console.log(res)
+    // 1.把后端数据赋值给响应式list
     // 格式化状态方法
     formatStatus(row, column) {
       // console.log(row, column)
@@ -195,6 +178,15 @@ export default {
         query: {
           id,
           xuFei
+        }
+      })
+    },
+    viewCard(id) {
+      // 传参方式和取参方式要对应
+      this.$router.push({
+        path: '/viewCard',
+        query: {
+          id
         }
       })
     },
@@ -269,6 +261,9 @@ export default {
 }
 .create-container{
   margin: 10px 0px;
+  .el-tag{
+    margin-left: 50%;
+  }
 }
 .page-container{
   padding:4px 0px;

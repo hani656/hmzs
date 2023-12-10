@@ -20,6 +20,11 @@ export const routes = [
     hidden: true
   },
   {
+    path: '/viewCard',
+    component: () => import('@/views/Car/CarCard/view-card'),
+    hidden: true
+  },
+  {
     path: '/addEnterprise',
     component: () => import('@/views/Park/Enterprise/AddEnterprise'),
     hidden: true
