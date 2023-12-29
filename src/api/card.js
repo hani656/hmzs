@@ -91,3 +91,11 @@ export function getTagInfoAPI(id) {
     method: 'GET'
   })
 }
+
+// 查看月卡详情
+export function getCardDetailAPI(id) {
+  return request({
+    url: `/parking/card/${id}`,
+    method: 'GET'
+  })
+}

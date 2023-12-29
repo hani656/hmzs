@@ -61,7 +61,7 @@
           prop="warningTime"
         />
         <el-table-column label="操作">
-          <template #default="">
+          <template #default="scope">
             <el-button
               size="mini"
               type="text"
@@ -69,10 +69,12 @@
             <el-button
               size="mini"
               type="text"
+              @click="viewDetail(scope.row.id)"
             >详情</el-button>
             <el-button
               size="mini"
               type="text"
+              @click="deleteWarning(scope.row.id)"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -95,7 +97,7 @@
 </template>
 
 <script>
-import { getWarningListAPI } from '@/api/warning'
+import { getWarningListAPI, deleteWarningAPI } from '@/api/warning'
 export default {
   name: 'RodWarn',
   data() {
@@ -172,8 +174,23 @@ export default {
       this.params.page = 1
       // 2. 调用获取列表接口
       this.getWarningList()
+    },
+    deleteWarning(id) {
+      this.$confirm(`确认删除此警告吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await deleteWarningAPI(id)
+        this.getWarningList()
+        this.$message.success('删除成功')
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
-
   }
 }
 </script>

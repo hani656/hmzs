@@ -3,7 +3,7 @@
     <!-- 一级路由渲染出来 -->
     <router-view />
     <!-- 准备 一个挂载应用的节点 -->
-    <div id="bigContainer"></div>
+    <div id="bigContainer" />
   </div>
 </template>
 

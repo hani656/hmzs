@@ -7,3 +7,20 @@ export function getWarningListAPI(params) {
     params
   })
 }
+
+// 查看告警详情
+export function getWarningDetailAPI(id) {
+  return request({
+    url: `/pole/warning/${id}`,
+    method: 'GET'
+  })
+}
+
+// 删除告警记录
+export function deleteWarningAPI(id) {
+  return request({
+    url: `/pole/warning/${id}`,
+    method: 'DELETE'
+  })
+}
+

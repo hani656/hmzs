@@ -3,7 +3,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <el-button size="mini" type="primary"  @click="$router.push('/big-screen')">打开大屏</el-button>
+          <el-button size="mini" type="primary" @click="$router.push('/big-screen')">打开大屏</el-button>
           <!-- 用户名称 -->
           <span class="name">team+管理员</span>
         </div>

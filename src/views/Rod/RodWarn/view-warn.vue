@@ -59,12 +59,11 @@
 </template>
 
 <script>
-import { getCardDetailAPI } from '@/api/card'
+import { getWarningDetailAPI } from '@/api/warning'
 export default {
   data() {
     return {
-      cardDetail: '',
-      rechargeList: []
+      warnDetail: ''
     }
   },
   computed: {
@@ -73,51 +72,48 @@ export default {
     }
   },
   mounted() {
-    this.getCardDetail(this.id)
+
   },
   methods: {
-    async getCardDetail(id) {
-      const res = await getCardDetailAPI(id)
-      this.cardDetail = res.data
-      this.rechargeList = res.data.rechargeList
-    }
+
   }
 
 }
 </script>
 
-<style scoped lang="scss">
-.view-card {
-  background-color: #f4f6f8;
-  height: 100vh;
+  <style scoped lang="scss">
+  .view-card {
+    background-color: #f4f6f8;
+    height: 100vh;
 
-  .view-header {
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    height: 64px;
-    background-color: #fff;
-
-  }
-
-  .view-main {
-    background: #f4f6f8;
-    padding: 20px 130px;
-
-    .form-container {
+    .view-header {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      height: 64px;
       background-color: #fff;
-      margin-bottom: 20px;
-      .title{
-        padding: 20px 30px;
-        height: 58px;
-        border-bottom: 1px solid rgb(236, 236, 236);
-      }
-      .el-descriptions{
-        padding: 20px 200px;
-        height: 130px;
+
+    }
+
+    .view-main {
+      background: #f4f6f8;
+      padding: 20px 130px;
+
+      .form-container {
+        background-color: #fff;
+        margin-bottom: 20px;
+        .title{
+          padding: 20px 30px;
+          height: 58px;
+          border-bottom: 1px solid rgb(236, 236, 236);
+        }
+        .el-descriptions{
+          padding: 20px 200px;
+          height: 130px;
+        }
       }
     }
-  }
 
-}
-</style>
+  }
+  </style>
+

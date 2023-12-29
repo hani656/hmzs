@@ -1,5 +1,5 @@
 <script>
-import { getInfoAPI } from '@/api/work'
+import { getInfoAPI, getContractAPI } from '@/api/work'
 import InfoWrapper from './components/InfoWrapper.vue'
 // 导入包中所有的东西 放到echarts变量身上
 import * as echarts from 'echarts'
@@ -13,17 +13,30 @@ export default {
   },
   data() {
     return {
-      detail: {}
+      detail: {},
+      params: {
+        page: 1,
+        pageSize: 10
+      },
+      contract: []
     }
   },
   async mounted() {
+    await this.getContract(this.params)
     // 保证图表要用到的数据返回之后才做初始化使用
     await this.getInfo()
     this.initEcharts()
   },
   methods: {
+    async getContract(params) {
+      const res = await getContractAPI(params)
+      console.log(res)
+      this.contract = res.data.rows
+    },
+
     async getInfo() {
       const res = await getInfoAPI()
+      // console.log(res)
       this.detail = res.data
     },
     // 初始化函数
@@ -111,6 +124,46 @@ export default {
         <!-- echarts渲染的节点 -->
         <div id="income-chart" class="chart-container" />
       </info-wrapper>
+      <info-wrapper title="临期合同提醒">
+        <el-table
+          :data="contract"
+          style="width: 100%"
+        >
+          <el-table-column
+            type="index"
+            label="序号"
+            width="180"
+          />
+          <el-table-column
+            prop="enterpriseName"
+            label="企业名称"
+            width="180"
+          />
+          <el-table-column
+            prop="buildingName"
+            label="租赁楼宇"
+            width="180"
+          />
+          <el-table-column
+            prop="startTime"
+            label="租赁时间"
+            width="200"
+          >
+            <template #default="{row}">
+              {{ row.startTime }} 至 {{ row.endTime }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="buildingName"
+            label="操作"
+          >
+            <template slot-scope="scope">
+              <el-button type="text" size="small" @click="handleClick(scope.row)">续签</el-button>
+              <el-button type="text" size="small">退租</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </info-wrapper>
     </div>
     <div class="right">
       <info-wrapper title="快捷入口">
@@ -127,7 +180,7 @@ export default {
             <img src="@/assets/add-bill.png" class="img">
             <span class="label">添加账单</span>
           </div>
-          <div class="item">
+          <div class="item" @click="$router.push('/big-screen')">
             <img src="@/assets/data-screen.png" class="img">
             <span class="label">数据大屏</span>
           </div>
@@ -140,6 +193,7 @@ export default {
 <style scoped lang="scss">
   .databoard-container {
     display: flex;
+    background-color: #f4f6f8;
     .left {
       flex-basis: 70%;
       margin-right: 20px;

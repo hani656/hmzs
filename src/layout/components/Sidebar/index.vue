@@ -7,7 +7,6 @@
         :default-active="activeMenu"
         mode="vertical"
         :collapse-transition="false"
-        :unique-opened="true"
       >
         <!-- 菜单中的每一项 -->
         <!-- route是路由表中的每一个对象 -->
