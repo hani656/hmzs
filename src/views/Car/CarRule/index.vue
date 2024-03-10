@@ -18,7 +18,7 @@
           </template>
         </el-table-column>
         <el-table-column label="计费规则" prop="ruleNameView" />
-        <el-table-column label="操作" fixed="right" width="120">
+        <el-table-column label="操作" fixed="right">
           <template #default="scope">
             <el-button size="mini" type="text" @click="edit(scope.row.id)">编辑</el-button>
             <el-button size="mini" type="text" @click="del(scope.row.id)">删除</el-button>

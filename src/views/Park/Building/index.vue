@@ -18,32 +18,26 @@
         <el-table-column
           type="index"
           label="序号"
-          width="160"
         />
         <el-table-column
           label="楼宇名称"
-          width="220"
           prop="name"
         />
         <el-table-column
           label="层数"
           prop="floors"
-          width="180"
         />
         <el-table-column
           label="在管面积(m²)"
-          width="180"
           prop="area"
         />
         <el-table-column
           label="物业费(元/m²)"
-          width="200"
           prop="propertyFeePrice"
         />
         <el-table-column
           label="状态"
           prop="status"
-          width="220"
         >
           <template #default="scope">
             {{ formatStatus(scope.row.status) }}

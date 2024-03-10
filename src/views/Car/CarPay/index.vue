@@ -34,7 +34,6 @@
         />
         <el-table-column
           label="车牌号码"
-          width="180"
           prop="carNumber"
         />
         <el-table-column
@@ -46,12 +45,10 @@
         </el-table-column>
         <el-table-column
           label="停车总时常"
-          width="120"
           prop="parkingTime"
         />
         <el-table-column
           label="缴纳费用(元)"
-          width="120"
           prop="actualCharge"
         />
         <el-table-column
