@@ -45,12 +45,8 @@
             </el-table>
           </template>
         </el-table-column>
-        <el-table-column
-          label="商品 ID"
-          prop="id"
-        />
         <el-table-column type="index" label="序号" />
-        <el-table-column label="企业名称" width="320" prop="name" />
+        <el-table-column label="企业名称" prop="name" />
         <el-table-column label="联系人" prop="contact" />
         <el-table-column label="联系电话" prop="contactNumber" />
         <el-table-column label="操作">
