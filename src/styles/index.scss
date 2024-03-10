@@ -4,6 +4,10 @@
 @import './element-variables.scss';
 @import './reset-element.scss';
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
