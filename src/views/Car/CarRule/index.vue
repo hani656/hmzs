@@ -2,7 +2,7 @@
   <div class="rule-container">
     <div class="create-container">
       <el-button type="primary" @click="openDialog">增加停车计费规则</el-button>
-      <el-button @click="exportExcel">导出Excel</el-button>
+      <!-- <el-button @click="exportExcel">导出Excel</el-button> -->
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -26,12 +26,23 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <el-pagination
+      <div class="page-container">
+        <el-pagination
+          :current-page="params.page"
+          layout="total, sizes,prev, pager, next"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="params.pageSize"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="pageChange"
+        />
+      </div>
+      <!-- <el-pagination
         layout="total, prev, pager, next"
         :total="total"
         :page-size="params.pageSize"
         @current-change="pageChange"
-      />
+      /> -->
     </div>
     <!-- 弹框 -->
     <el-dialog
@@ -321,6 +332,12 @@ export default {
       this.ruleList = res.data.rows
       this.total = res.data.total
     },
+    handleSizeChange(val) {
+      this.params.pageSize = val
+      this.getList()
+      // console.log(`每页 ${val} 条`)
+    },
+
     pageChange(page) {
       this.params.page = page
       this.getList()
@@ -331,7 +348,7 @@ export default {
     closeDialog() {
       this.dialogVisible = false
       // 删除id，避免dialog重置时，id不为空,造成增加功能失效和dialog标题错误
-      delete this.formData.ruleNumber
+      // delete this.formData.ruleNumber
       delete this.formData.id
       this.$refs.form.resetFields()
     },
