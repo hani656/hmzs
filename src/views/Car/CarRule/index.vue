@@ -21,7 +21,7 @@
         <el-table-column label="操作" fixed="right">
           <template #default="scope">
             <el-button size="mini" type="text" @click="edit(scope.row.id)">编辑</el-button>
-            <el-button size="mini" type="text" @click="del(scope.row.id)">删除</el-button>
+            <el-button size="mini" type="text" @click="del(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -355,13 +355,14 @@ export default {
     addRule() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          // const ruleForm2 = {
-          //   ...this.formData,
-          //   chargeType: this.formatChargeType(this.formData.chargeType)
-          // }
-          await addRuleAPI(this.formData)
-          // 提示用户
-          this.$message.success('添加成功')
+          if (!this.formData.id) {
+            const res = await addRuleAPI(this.formData)
+            // 提示用户
+            res.code === 10000 ? this.$message.success('添加成功') : this.$message.error(res.msg)
+          } else {
+            const res = await editRuleAPI(this.formData)
+            res.code === 10000 ? this.$message.success('修改成功') : this.$message.error(res.msg)
+          }
           // 刷新列表
           this.getList()
           // 关闭弹窗
@@ -373,12 +374,23 @@ export default {
       this.openDialog()
       const res = await getRuleDetailAPI(id)
       this.formData = res.data
-      await editRuleAPI(this.formData)
     },
-    async del(id) {
-      await delRuleAPI(id)
-      this.$message.success('删除成功')
-      this.getList()
+    async del(row) {
+      console.log(row)
+      this.$confirm(`确认删除当前（${row.ruleName}）计费规则吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await delRuleAPI(row.id)
+        this.getList()
+        this.$message.success('删除计费规则成功')
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   }
 }
