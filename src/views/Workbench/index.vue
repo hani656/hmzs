@@ -1,3 +1,104 @@
+<template>
+  <div class="databoard-container">
+    <div class="left">
+      <info-wrapper title="园区数据">
+        <div class="pard-data">
+          <div class="item">
+            <span class="label">年度累计收费（元）</span>
+            <span class="value">{{ detail.annualIncome ? detail.annualIncome: '--' }}</span>
+          </div>
+          <div class="item">
+            <span class="label">入驻企业总数（个）</span>
+            <span class="value">{{ detail.enterpriseTotal ? detail.enterpriseTotal:'--' }}</span>
+          </div>
+          <div class="item">
+            <span class="label">月卡车辆总数（辆）</span>
+            <span class="value">{{ detail.monthCardTotal ? detail.monthCardTotal: '--' }}</span>
+          </div>
+          <div class="item">
+            <span class="label">一体杆总数（台）</span>
+            <span class="value">{{ detail.chargePoleTotal ? detail.chargePoleTotal: '--' }}</span>
+          </div>
+        </div>
+      </info-wrapper>
+      <info-wrapper title="年度收入统计">
+        <!-- echarts渲染的节点 -->
+        <div id="income-chart" class="chart-container" />
+      </info-wrapper>
+      <info-wrapper title="临期合同提醒">
+        <el-table
+          :data="contract"
+          style="width: 100%"
+        >
+          <el-table-column
+            type="index"
+            label="序号"
+          />
+          <el-table-column
+            prop="enterpriseName"
+            label="企业名称"
+          />
+          <el-table-column
+            prop="buildingName"
+            label="租赁楼宇"
+          />
+          <el-table-column
+            prop="startTime"
+            label="租赁时间"
+          >
+            <template #default="{row}">
+              {{ row.startTime }} 至 {{ row.endTime }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="buildingName"
+            label="操作"
+          >
+            <template slot-scope="scope">
+              <el-button type="text" size="small" @click="handleClick(scope.row)">续签</el-button>
+              <el-button type="text" size="small">退租</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 分页 -->
+        <div class="page-container">
+          <el-pagination
+            :current-page="params.page"
+            layout="total, sizes,prev, pager, next"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="params.pageSize"
+            :total="total"
+            @size-change="handleSizeChange"
+            @current-change="pageChange"
+          />
+        </div>
+      </info-wrapper>
+    </div>
+    <div class="right">
+      <info-wrapper title="快捷入口">
+        <div class="fast-enter">
+          <div class="item" @click="$router.push('/addEnterprise')">
+            <img src="@/assets/add-enterprise.png" alt="" class="img">
+            <span class="label">添加企业</span>
+          </div>
+          <div class="item" @click="$router.push('/sys/user')">
+            <img src="@/assets/employee-manage.png" class="img">
+            <span class="label">员工管理</span>
+          </div>
+          <div class="item" @click="addBillVisible = true">
+            <img src="@/assets/add-bill.png" class="img">
+            <span class="label">添加账单</span>
+          </div>
+          <!-- <div class="item" @click="$router.push('/big-screen')">
+            <img src="@/assets/data-screen.png" class="img">
+            <span class="label">数据大屏</span>
+          </div> -->
+        </div>
+      </info-wrapper>
+    </div>
+  </div>
+</template>
+
 <script>
 import { getInfoAPI, getContractAPI } from '@/api/work'
 import InfoWrapper from './components/InfoWrapper.vue'
@@ -18,6 +119,7 @@ export default {
         page: 1,
         pageSize: 10
       },
+      total: 0,
       contract: []
     }
   },
@@ -29,9 +131,20 @@ export default {
   },
   methods: {
     async getContract(params) {
-      const res = await getContractAPI(params)
-      console.log(res)
+      const res = await getContractAPI(this.params)
+      console.log(res, '------------------')
       this.contract = res.data.rows
+      this.total = res.data.total
+    },
+    handleSizeChange(val) {
+      this.params.pageSize = val
+      this.getContract()
+      // console.log(`每页 ${val} 条`)
+    },
+
+    pageChange(page) {
+      this.params.page = page
+      this.getContract()
     },
 
     async getInfo() {
@@ -96,99 +209,6 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div class="databoard-container">
-    <div class="left">
-      <info-wrapper title="园区数据">
-        <div class="pard-data">
-          <div class="item">
-            <span class="label">年度累计收费（元）</span>
-            <span class="value">{{ detail.annualIncome ? detail.annualIncome: '--' }}</span>
-          </div>
-          <div class="item">
-            <span class="label">入驻企业总数（个）</span>
-            <span class="value">{{ detail.enterpriseTotal ? detail.enterpriseTotal:'--' }}</span>
-          </div>
-          <div class="item">
-            <span class="label">月卡车辆总数（辆）</span>
-            <span class="value">{{ detail.monthCardTotal ? detail.monthCardTotal: '--' }}</span>
-          </div>
-          <div class="item">
-            <span class="label">一体杆总数（台）</span>
-            <span class="value">{{ detail.chargePoleTotal ? detail.chargePoleTotal: '--' }}</span>
-          </div>
-        </div>
-      </info-wrapper>
-      <info-wrapper title="年度收入统计">
-        <!-- echarts渲染的节点 -->
-        <div id="income-chart" class="chart-container" />
-      </info-wrapper>
-      <info-wrapper title="临期合同提醒">
-        <el-table
-          :data="contract"
-          style="width: 100%"
-        >
-          <el-table-column
-            type="index"
-            label="序号"
-            width="180"
-          />
-          <el-table-column
-            prop="enterpriseName"
-            label="企业名称"
-            width="180"
-          />
-          <el-table-column
-            prop="buildingName"
-            label="租赁楼宇"
-            width="180"
-          />
-          <el-table-column
-            prop="startTime"
-            label="租赁时间"
-            width="200"
-          >
-            <template #default="{row}">
-              {{ row.startTime }} 至 {{ row.endTime }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="buildingName"
-            label="操作"
-          >
-            <template slot-scope="scope">
-              <el-button type="text" size="small" @click="handleClick(scope.row)">续签</el-button>
-              <el-button type="text" size="small">退租</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </info-wrapper>
-    </div>
-    <div class="right">
-      <info-wrapper title="快捷入口">
-        <div class="fast-enter">
-          <div class="item" @click="$router.push('/addEnterprise')">
-            <img src="@/assets/add-enterprise.png" alt="" class="img">
-            <span class="label">添加企业</span>
-          </div>
-          <div class="item" @click="$router.push('/sys/user')">
-            <img src="@/assets/employee-manage.png" class="img">
-            <span class="label">员工管理</span>
-          </div>
-          <div class="item" @click="addBillVisible = true">
-            <img src="@/assets/add-bill.png" class="img">
-            <span class="label">添加账单</span>
-          </div>
-          <div class="item" @click="$router.push('/big-screen')">
-            <img src="@/assets/data-screen.png" class="img">
-            <span class="label">数据大屏</span>
-          </div>
-        </div>
-      </info-wrapper>
-    </div>
-  </div>
-</template>
 
 <style scoped lang="scss">
   .databoard-container {
@@ -305,5 +325,9 @@ export default {
     .chart-container {
       height: 300px;
     }
+  }
+  .page-container{
+    padding:4px 0px;
+    text-align: right;
   }
 </style>
