@@ -222,7 +222,7 @@ export default {
       // 请求参数
       params: {
         page: 1,
-        pageSize: 5
+        pageSize: 10
       },
       // 规则总数
       total: 0,
