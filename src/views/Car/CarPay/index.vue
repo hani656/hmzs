@@ -61,7 +61,10 @@
         <el-table-column
           label="缴纳方式"
           prop="paymentMethod"
-        />
+        ><template #default="scope">
+          {{ formatMode(scope.row.paymentMethod) }}
+        </template>
+        </el-table-column>
         <el-table-column
           label="缴纳时间"
           prop="paymentTime"
@@ -131,6 +134,14 @@ export default {
         1: '已缴纳'
       }
       return statusMap[status]
+    },
+    formatMode(Method) {
+      const MethodMap = {
+        Alipay: '支付宝',
+        WeChat: '微信',
+        Cash: '线下'
+      }
+      return MethodMap[Method]
     },
     formatStatusType(type) {
       if (type === 'card') {
