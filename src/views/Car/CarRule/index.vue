@@ -204,7 +204,8 @@ export default {
     return {
       ruleList: [], // 规则列表
       // 添加计费规则的相关数据
-      formData: {
+      formData: {},
+      defaultFormData: {
         ruleNumber: '', // 计费规则编号 (必填)
         ruleName: '', // 计费规则名称 (必填)
         freeDuration: null, // 免费时长，单位:分钟
@@ -279,6 +280,7 @@ export default {
   // },
   mounted() {
     this.getList()
+    this.formData = JSON.parse(JSON.stringify(this.defaultFormData))
   },
   methods: {
     dialogTitle() {
@@ -343,6 +345,7 @@ export default {
       this.getList()
     },
     openDialog() {
+      this.formData = JSON.parse(JSON.stringify(this.defaultFormData))
       this.dialogVisible = true
     },
     closeDialog() {
